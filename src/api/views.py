@@ -6,6 +6,8 @@ from lists.models import Todo, TodoList
 
 from django.http import HttpResponse
 from django.utils import timezone
+from django.db import connections
+from django.db.utils import OperationalError
 import time
 
 class IsCreatorOrReadOnly(permissions.BasePermission):
@@ -56,3 +58,15 @@ class TodoViewSet(viewsets.ModelViewSet):
         user = self.request.user
         creator = user if user.is_authenticated else None
         serializer.save(creator=creator)
+
+def health_check(request):
+    return HttpResponse(status=200)
+
+def readiness_check(request):
+    db_conn = connections['default']
+    try:
+        db_conn.cursor()
+    except OperationalError:
+        return HttpResponse(status=503)
+
+    return HttpResponse("Ready", status=200)
