@@ -8,7 +8,7 @@ metadata:
 spec:
   containers:
     - name: todoapp-app
-      image: bohn13/todoapp:3.0.1
+      image: bohn13/todoapp:3.0.0
       ports:
         - containerPort: 8080
       livenessProbe:
